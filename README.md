@@ -6,7 +6,7 @@ Classification and comparison of Javascript objects.
 
 ### Using Npm
 1. Run `npm install cast-comparison`
-2. Import it into your script `import Cast from 'cast-comparison'`
+2. Import it into your script `import Comparator from 'cast-comparison'`
 
 ### Downloading File
 1. Download "comparator.umd.js" from the [latest release](https://github.com/plastiniq/cast-comparison/releases/latest/download/comparator.umd.js) 
@@ -69,6 +69,6 @@ Test
   var firstCar = { wheels: 6, length: 10, seats: 2, maxSpeed: 160 } // truck
   var secondCar = { wheels: 4, length: 4, seats: 4, maxSpeed: 200 } // passenger car
 
-  console.log(`Chance that the firstCar is a truck: ${trucksComparator.test(firstCar) * 100}%`)
-  console.log(`Chance that the secondCar is a truck: ${trucksComparator.test(secondCar) * 100}%`) 
+  console.log(`Probability that the firstCar is a truck: ${trucksComparator.test(firstCar) * 100}%`)
+  console.log(`Probability that the secondCar is a truck: ${trucksComparator.test(secondCar) * 100}%`) 
 ```

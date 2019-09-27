@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/plastiniq/cast-comparison-js.git"
+    "url": "git+https://github.com/plastiniq/cast-comparison.git"
   },
   "keywords": [
     "comparison",
@@ -26,9 +26,9 @@
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/plastiniq/cast-comparison-js/issues"
+    "url": "https://github.com/plastiniq/cast-comparison/issues"
   },
-  "homepage": "https://github.com/plastiniq/cast-comparison-js#readme",
+  "homepage": "https://github.com/plastiniq/cast-comparison#readme",
   "dependencies": {
     "regression": "^2.0.1"
   },
