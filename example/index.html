@@ -11,6 +11,8 @@
     maxSpeed: [0.2, Comparator.DOWN]
   }
 
+  var trucksComparator = new Comparator(config)
+
   var knownTrucks = [
     { wheels: 6, length: 10, seats: 3, maxSpeed: 180 },
     { wheels: 6, length: 12, seats: 3, maxSpeed: 160 },
@@ -18,8 +20,6 @@
     { wheels: 4, length: 8, seats: 2, maxSpeed: 180 },
     { wheels: 8, length: 12, seats: 5, maxSpeed: 160 }
   ]
-
-  var trucksComparator = new Comparator(config)
 
   trucksComparator.train(knownTrucks)
 

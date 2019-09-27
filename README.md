@@ -17,10 +17,10 @@ Let's create an optional config. We will clarify how to calculate an inaccurate 
 
 ```javascript
   var config = {
-    wheels: [0.2, Cast.BETWEEN],
-    length: [0.2, Cast.UP],
-    seats: [0.3, Cast.BETWEEN],
-    maxSpeed: [0.2, Cast.DOWN]
+    wheels: [0.2, Comparator.BETWEEN],
+    length: [0.2, Comparator.UP],
+    seats: [0.3, Comparator.BETWEEN],
+    maxSpeed: [0.2, Comparator.DOWN]
   }
 ```
 
@@ -50,7 +50,7 @@ Possible values:
 Now create a template based on some data we know
 
 ```javascript
-  var trucksCast = new Cast(config)
+  var trucksComparator = new Comparator(config)
 
   var knownTrucks = [
     { wheels: 6, length: 10, seats: 3, maxSpeed: 180 },
@@ -60,7 +60,7 @@ Now create a template based on some data we know
     { wheels: 8, length: 12, seats: 5, maxSpeed: 160 }
   ]
 
-  trucksCast.shape(knownTrucks)
+  trucksComparator.train(knownTrucks)
 ```
 
 Test
@@ -69,6 +69,6 @@ Test
   var firstCar = { wheels: 6, length: 10, seats: 2, maxSpeed: 160 } // truck
   var secondCar = { wheels: 4, length: 4, seats: 4, maxSpeed: 200 } // passenger car
 
-  console.log(`Chance that the firstCar is a truck: ${trucksCast.compare(firstCar) * 100}%`)
-  console.log(`Chance that the secondCar is a truck: ${trucksCast.compare(secondCar) * 100}%`)
+  console.log(`Chance that the firstCar is a truck: ${trucksComparator.test(firstCar) * 100}%`)
+  console.log(`Chance that the secondCar is a truck: ${trucksComparator.test(secondCar) * 100}%`) 
 ```
