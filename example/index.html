@@ -1,0 +1,32 @@
+
+<!doctype html>
+<html>
+<script src="../dist/comparator.umd.js"></script>
+<script type="module">
+
+  var config = {
+    wheels: [0.2, Comparator.BETWEEN],
+    length: [0.2, Comparator.UP],
+    seats: [0.3, Comparator.BETWEEN],
+    maxSpeed: [0.2, Comparator.DOWN]
+  }
+
+  var knownTrucks = [
+    { wheels: 6, length: 10, seats: 3, maxSpeed: 180 },
+    { wheels: 6, length: 12, seats: 3, maxSpeed: 160 },
+    { wheels: 4, length: 6, seats: 2, maxSpeed: 180 },
+    { wheels: 4, length: 8, seats: 2, maxSpeed: 180 },
+    { wheels: 8, length: 12, seats: 5, maxSpeed: 160 }
+  ]
+
+  var trucksComparator = new Comparator(config)
+
+  trucksComparator.train(knownTrucks)
+
+  var firstCar = { wheels: 6, length: 10, seats: 2, maxSpeed: 160 } // truck
+  var secondCar = { wheels: 4, length: 4, seats: 4, maxSpeed: 200 } // passenger car
+
+  console.log(`Chance that the firstCar is a truck: ${trucksComparator.test(firstCar) * 100}%`)
+  console.log(`Chance that the secondCar is a truck: ${trucksComparator.test(secondCar) * 100}%`) 
+</script>
+</html>

@@ -1,0 +1,40 @@
+{
+  "name": "cast-comparison",
+  "version": "1.0.2",
+  "description": "Utility for comparing an arbitrary JavaScript object with a reference",
+  "main": "dist/comparator.cjs.js",
+  "module": "dist/comparator.esm.js",
+  "browser": "dist/comparator.umd.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plastiniq/cast-comparison-js.git"
+  },
+  "keywords": [
+    "comparison",
+    "javascript",
+    "linear-regression",
+    "classification"
+  ],
+  "author": {
+    "name": "Dmitry Malyovaniy",
+    "url": "https://malyovaniy.com"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/plastiniq/cast-comparison-js/issues"
+  },
+  "homepage": "https://github.com/plastiniq/cast-comparison-js#readme",
+  "dependencies": {
+    "regression": "^2.0.1"
+  },
+  "devDependencies": {
+    "rollup": "^1.20.0",
+    "rollup-plugin-commonjs": "^10.0.0",
+    "rollup-plugin-node-resolve": "^5.1.0"
+  }
+}
