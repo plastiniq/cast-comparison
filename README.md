@@ -1,16 +1,16 @@
-# cast-comparison-js
+# cast-comparison
 
 Classification and comparison of Javascript objects.
 
 ## Installing
 
 ### Using Npm
-1. Run `npm install cast-comparison-js`
-2. Import it into your script `import Cast from 'cast-comparison-js'`
+1. Run `npm install cast-comparison`
+2. Import it into your script `import Cast from 'cast-comparison'`
 
 ### Downloading File
-1. Download "cast.umd.js" from the [latest release](https://github.com/plastiniq/cast-comparison-js/releases/latest/download/cast.umd.js) 
-2. Add it into your html `<script src="cast.umd.js"></script>`
+1. Download "comparator.umd.js" from the [latest release](https://github.com/plastiniq/cast-comparison/releases/latest/download/comparator.umd.js) 
+2. Add it into your html `<script src="comparator.umd.js"></script>`
 
 ## Usage Example
 Let's create an optional config. We will clarify how to calculate an inaccurate match for properties in our objects. 
@@ -44,7 +44,7 @@ Possible values:
 
 `null` - no propagation.
 
-![Spread and Propagation](https://github.com/plastiniq/cast-comparison-js/blob/master/illustrations/spread-propagation.svg)
+![Spread and Propagation](https://github.com/plastiniq/cast-comparison/blob/master/illustrations/spread-propagation.svg)
 
 
 Now create a template based on some data we know
