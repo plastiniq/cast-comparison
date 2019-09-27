@@ -1,6 +1,6 @@
 {
   "name": "cast-comparison",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Utility for comparing an arbitrary JavaScript object with a reference",
   "main": "dist/comparator.cjs.js",
   "module": "dist/comparator.esm.js",
