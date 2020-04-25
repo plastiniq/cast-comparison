@@ -20,19 +20,42 @@ export default class {
       var value = obj[key]
       var spread = (this.config && this.config[key] && this.config[key][0]) || 0
       var propagation = (this.config && this.config[key] && this.config[key][1]) || null
-      this.properties[key] = (this.properties[key] && this.properties[key].shape(value)) || new Cast(spread, propagation).shape(value)
+      this.properties[key] = this.properties[key] || new Cast(spread, propagation)
+
+      if (value !== '' && value !== undefined) {
+        this.properties[key].shape(value)
+      }
     }
+  }
+
+  get totalOutput () {
+    return Object.values(this.properties).reduce((acc, val) => acc + val.maxY, 0)
+  }
+
+  get maxOutput () {
+    return Object.values(this.properties).reduce((acc, val) => Math.max(acc, val.maxY), 0)
   }
 
   test (obj) {
     var sum = 0
-    var maxOutput = Object.values(this.properties).reduce((acc, val) => acc + val.maxY, 0)
 
     for (let key in obj) {
-      let value = Array.isArray(obj[key]) ? obj[key][0] : obj[key]
-      sum += (this.properties[key] && this.properties[key].compare(value)) || 0
+      sum += (this.properties[key] && this.properties[key].compare(obj[key])) || 0
     }
-    return sum / maxOutput
+
+    return this.totalOutput ? sum / this.totalOutput : 0
+  }
+
+  intersection (obj) {
+    var sum = 0
+    var total = 0
+
+    for (let key in obj) {
+      sum += (this.properties[key] && this.properties[key].intersection(obj[key])) || 0
+      total += (this.properties[key] && this.properties[key].findMaxGroup(obj[key]).y) || 0
+    }
+
+    return total ? sum / total : 0
   }
 
   flatten (into, currentKey = '', target = {}) {

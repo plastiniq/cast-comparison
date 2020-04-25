@@ -2,7 +2,7 @@
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
 	(global = global || self, global.Comparator = factory());
-}(this, function () { 'use strict';
+}(this, (function () { 'use strict';
 
 	const BETWEEN = 'between';
 	const DOWN = 'down';
@@ -410,24 +410,40 @@
 	  }
 
 	  compare(xValue) {
-	    if (isNaN(xValue)) {
+	    if (!Object.keys(this.xy).length) {
+	      return 0
+	    }
+	    else if (isNaN(xValue)) {
 	      return this.xy[xValue] || 0
 	    } else {
 	      var xNumber = parseFloat(xValue);
 	      const reg = regression.linear(Object.entries(this.xy).map(v => [parseFloat(v[0]), parseFloat(v[1])]));
 	    
 	      if (this.propagation === DOWN) {
-	        return xNumber < this.maxX ? reg.predict(xNumber)[1] : this.approx(xNumber)
+	        return xNumber < this.maxX ? Math.max(reg.predict(xValue)[1], this.approx(xNumber)) : this.approx(xNumber)
 	      }
 	      else if (this.propagation === UP) {
-	        return xNumber > this.minX ? reg.predict(xNumber)[1] : this.approx(xNumber)
+	        return xNumber > this.minX ? Math.max(reg.predict(xValue)[1], this.approx(xNumber)) : this.approx(xNumber)
 	      } 
 	      else if (this.propagation === BETWEEN) {
-	        return xNumber > this.minX && xNumber < this.maxX ? reg.predict(xValue)[1] : this.approx(xNumber)
+	        return xNumber > this.minX && xNumber < this.maxX ? Math.max(reg.predict(xValue)[1], this.approx(xNumber)) : this.approx(xNumber)
 	      } 
 	      else {
 	        return this.approx(xNumber)
 	      }
+	    }
+	  }
+
+	  intersection(xValue) {
+	    if (!Object.keys(this.xy).length) {
+	      return 0
+	    }
+	    else if (isNaN(xValue)) {
+	      return this.xy[xValue] || 0
+	    } else {
+	      var value = parseFloat(xValue);
+	      var maxGroup = this.findMaxGroup(value);
+	      return this.intersect(value, maxGroup.x) * maxGroup.y
 	    }
 	  }
 
@@ -452,17 +468,50 @@
 	  }
 
 	  get maxY() {
-	    var xSet = Object.keys(this.xy).filter(v => !isNaN(v)).map(v => parseFloat(v));
-	    var setMax = 0;
+	    return this.xByMaxY.y
+	  }
 
-	    if (xSet.length) {
-	      let groups = xSet.map(x1 => ({x: x1, group: xSet.filter(x2 => x2 != x1 && Math.abs(x1 - x2) < this.spreadDistance)}));
-	      setMax = Math.max(...groups.map(v => this.xy[v.x] + v.group.reduce((acc, curr) => {
-	        return acc + this.xy[curr] * (1 - Math.abs(v.x - curr) / this.spreadDistance)
-	      }, 0)));
+	  get groups () {
+	    var xValues = Object.keys(this.xy);
+
+	    if (!xValues.length) {
+	      return []
 	    }
 
-	    return Math.max(setMax, ...Object.values(this.xy))
+	    var xNumbers = xValues.filter(v => !isNaN(v)).map(v => parseFloat(v));
+	    var groups = [];
+
+	    const neighbors = (arr, value) => {
+	      return arr.filter(x => x != value && Math.abs(value - x) < this.spreadDistance)
+	    };
+
+	    const mergeGroup = (anchor, group) => {
+	      return this.xy[anchor] + group.reduce((acc, curr) => (acc + this.xy[curr] * (1 - Math.abs(anchor - curr) / this.spreadDistance)), 0)
+	    };
+
+	    if (xNumbers.length) {
+	      groups = xNumbers.map(x => ({ x, y: mergeGroup(x, neighbors(xNumbers, x)) }));
+	    }
+
+	    return groups.concat(xValues.filter(v => isNaN(v)).map(v => ({ x: v, y: this.xy[v] })))
+	  }
+
+	  get xByMaxY () {
+	    var groups = this.groups.sort((a, b) => a.y > b.y ? -1 : 1);
+	    return groups.length ? groups[0] : { x: 0, y: 0 }
+	  }
+
+	  findMaxGroup (value) {
+	    if (isNaN(value)) {
+	      return this.xByMaxY
+	    }
+	    var numValue = parseFloat(value);
+	    var groups = this.groups.sort((a, b) => this.intersect(a.x, numValue) * a.y > this.intersect(b.x, numValue) * b.y ? -1 : 1);
+	    return groups.length ? groups[0] : { x: 0, y: 0 }
+	  }
+
+	  intersect (v1, v2) {
+	    return Math.min(v1, v2) / Math.max(v1, v2)
 	  }
 
 	  get minX() {
@@ -505,19 +554,42 @@
 	      var value = obj[key];
 	      var spread = (this.config && this.config[key] && this.config[key][0]) || 0;
 	      var propagation = (this.config && this.config[key] && this.config[key][1]) || null;
-	      this.properties[key] = (this.properties[key] && this.properties[key].shape(value)) || new Cast(spread, propagation).shape(value);
+	      this.properties[key] = this.properties[key] || new Cast(spread, propagation);
+
+	      if (value !== '' && value !== undefined) {
+	        this.properties[key].shape(value);
+	      }
 	    }
+	  }
+
+	  get totalOutput () {
+	    return Object.values(this.properties).reduce((acc, val) => acc + val.maxY, 0)
+	  }
+
+	  get maxOutput () {
+	    return Object.values(this.properties).reduce((acc, val) => Math.max(acc, val.maxY), 0)
 	  }
 
 	  test (obj) {
 	    var sum = 0;
-	    var maxOutput = Object.values(this.properties).reduce((acc, val) => acc + val.maxY, 0);
 
 	    for (let key in obj) {
-	      let value = Array.isArray(obj[key]) ? obj[key][0] : obj[key];
-	      sum += (this.properties[key] && this.properties[key].compare(value)) || 0;
+	      sum += (this.properties[key] && this.properties[key].compare(obj[key])) || 0;
 	    }
-	    return sum / maxOutput
+
+	    return this.totalOutput ? sum / this.totalOutput : 0
+	  }
+
+	  intersection (obj) {
+	    var sum = 0;
+	    var total = 0;
+
+	    for (let key in obj) {
+	      sum += (this.properties[key] && this.properties[key].intersection(obj[key])) || 0;
+	      total += (this.properties[key] && this.properties[key].findMaxGroup(obj[key]).y) || 0;
+	    }
+
+	    return total ? sum / total : 0
 	  }
 
 	  flatten (into, currentKey = '', target = {}) {
@@ -554,4 +626,4 @@
 
 	return comparator;
 
-}));
+})));
